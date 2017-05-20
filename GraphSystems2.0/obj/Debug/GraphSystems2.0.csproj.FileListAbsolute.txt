@@ -1,0 +1,9 @@
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\obj\Debug\GraphSystems2.0.csprojResolveAssemblyReference.cache
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\obj\Debug\GraphSystems2._0.Form1.resources
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\obj\Debug\GraphSystems2._0.Properties.Resources.resources
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\obj\Debug\GraphSystems2.0.csproj.GenerateResource.Cache
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\obj\Debug\GraphSystems2.0.exe
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\bin\Debug\GraphSystems2.0.exe.config
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\bin\Debug\GraphSystems2.0.exe
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\bin\Debug\GraphSystems2.0.pdb
+G:\CSharpProjects\GraphSystems2.0\GraphSystems2.0\obj\Debug\GraphSystems2.0.pdb
