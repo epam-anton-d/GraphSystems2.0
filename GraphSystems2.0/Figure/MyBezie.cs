@@ -7,7 +7,7 @@ namespace Logic
 {
     internal class MyBezie : Figure
     {
-        public MyBezie(Color color, List<Point> points) : base(color, points)
+        public MyBezie(Color color, List<PointF> points) : base(color, points)
         {
 
         }
@@ -17,11 +17,11 @@ namespace Logic
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public List<Point> GetBeziePixels(List<Point> points)
+        public List<PointF> GetBeziePixels(List<PointF> points)
         {
-            Point[] pXY = new Point[100];
-            Point[] fXY = new Point[100];
-            List<Point> pixels = new List<Point>();
+            var pXY = new PointF[100];
+            var fXY = new PointF[100];
+            var pixels = new List<PointF>();
             double x = 0,
                    y = 0;
             double t = 0;
@@ -48,7 +48,7 @@ namespace Logic
                  
                 if (i != 0)
                 {
-                    pixels.AddRange(GetLinePixels(new List<Point> { pXY[i - 1], pXY[i] }));
+                    pixels.AddRange(GetLinePixels(new List<PointF> { pXY[i - 1], pXY[i] }));
                 }
             }
 
@@ -57,10 +57,9 @@ namespace Logic
             return pixels;
         }
 
-        public override List<Point> GetFigurePixels()
+        public override List<PointF> GetFigurePixels()
         {
-            List<Point> tempPoints = UseTransfMatrix();
-            return GetBeziePixels(tempPoints);
+            return GetBeziePixels(Points);
         }
 
         private int Fact(int x)

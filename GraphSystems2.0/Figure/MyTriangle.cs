@@ -7,12 +7,12 @@ namespace Logic
 {
     internal class MyTriangle : Figure
     {
-        public MyTriangle(Color color, List<Point> points) : base(color, points)
+        public MyTriangle(Color color, List<PointF> points) : base(color, points)
         {
-
+            Points = FindMyIsotriangleTops(points);
         }
 
-        private List<Point> FindMyIsotriangleTops(List<Point> points)
+        private List<PointF> FindMyIsotriangleTops(List<PointF> points)
         {
             int yFant;
             int xFant;
@@ -23,24 +23,20 @@ namespace Logic
 
             if (Math.Abs(xFant - points[2].X) < Math.Abs(yFant - points[2].Y))
             {
-                points[2] = new Point(xFant, points[2].Y);
-                //points.Add(new Point(xFant, points[2].Y));
+                points[2] = new PointF(xFant, points[2].Y);
             }
             else
             {
-                points[2] = new Point(points[2].X, yFant);
-                //points.Add(new Point(points[2].X, yFant));
+                points[2] = new PointF(points[2].X, yFant);
             }
-            //points.RemoveAt(2);
 
             return points;
         }
 
-        public override List<Point> GetFigurePixels()
+        public override List<PointF> GetFigurePixels()
         {
-            List<Point> tempPoints = FindMyIsotriangleTops(points);
-            tempPoints = UseTransfMatrix(tempPoints);
-            return GetFillUpPixels(tempPoints);
+            //var tempPoints = FindMyIsotriangleTops(Points);
+            return GetFillUpPixels(Points);
         }
     }
 }

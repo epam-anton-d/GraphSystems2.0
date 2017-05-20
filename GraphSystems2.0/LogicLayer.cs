@@ -6,34 +6,34 @@ namespace Logic
 {
     internal class LogicLayer
     {
-        public List<Point> clicks;
+        public List<PointF> clicks;
         public List<Figure> figureList;
-        public List<Point> selection;
+        public List<PointF> selection;
         public Pen pen;
         public int firstSelectedFigure;
         public int secondSelectedFigure;
-        public Point spinPoint;
         public Font myFont;
-        public Point anglePoint;
-        public Point centerOfFigure;
-        public double xScale;
+        public PointF spinPoint;
+        public PointF anglePoint;
+        public PointF centerOfFigure;
+        public float xScale;
 
         public LogicLayer()
         {
-            clicks = new List<Point>();
+            clicks = new List<PointF>();
             figureList = new List<Figure>();
-            selection = new List<Point>();
+            selection = new List<PointF>();
             pen = new Pen(Color.Red);
             firstSelectedFigure = -1;
             secondSelectedFigure = -1;
-            spinPoint = new Point();
-            anglePoint = new Point();
+            spinPoint = new PointF();
+            anglePoint = new PointF();
             myFont = new Font("Arial", 14);
-            centerOfFigure = new Point();
+            centerOfFigure = new PointF();
             xScale = 0;
         }
 
-        public void DrawMyFigure(Graphics drawArea, Pen pen, List<Point> pixels)
+        public void DrawMyFigure(Graphics drawArea, Pen pen, List<PointF> pixels)
         {
             foreach (var pixel in pixels)
             {
@@ -42,7 +42,7 @@ namespace Logic
         }
 
         // Вывод точки (квадрата)
-        public void DrawPoint(Graphics drawArea, Pen pen, Point point)
+        public void DrawPoint(Graphics drawArea, Pen pen, PointF point)
         {
             drawArea.DrawRectangle(pen, point.X, point.Y, 1, 1);
         }
@@ -51,7 +51,7 @@ namespace Logic
         {
             drawArea.Clear(SystemColors.Control);
 
-            List<Point> pixels;
+            List<PointF> pixels;
 
             foreach (var figure in figureList)
             {
@@ -68,9 +68,9 @@ namespace Logic
             clicks.Clear();
         }
 
-        public List<Point> GetSelection(Figure figure)
+        public List<PointF> GetSelection(Figure figure)
         {
-            List<Point> pixels = figure.GetFigurePixels();
+            var pixels = figure.GetFigurePixels();
 
             int xMin = int.MaxValue,
                 xMax = int.MinValue,
@@ -81,19 +81,19 @@ namespace Logic
             {
                 if (pixel.X < xMin)
                 {
-                    xMin = pixel.X;
+                    xMin = (int)Math.Round(pixel.X);
                 }
                 if (pixel.X > xMax)
                 {
-                    xMax = pixel.X;
+                    xMax = (int)Math.Round(pixel.X);
                 }
                 if (pixel.Y < yMin)
                 {
-                    yMin = pixel.Y;
+                    yMin = (int)Math.Round(pixel.Y);
                 }
                 if (pixel.Y > yMax)
                 {
-                    yMax = pixel.Y;
+                    yMax = (int)Math.Round(pixel.Y);
                 }
             }
 
@@ -104,10 +104,10 @@ namespace Logic
 
             pixels.Clear();
 
-            pixels.AddRange(new MyLine(Color.Black, new List<Point>() { new Point(xMin, yMin), new Point(xMax, yMin) }).GetFigurePixels());
-            pixels.AddRange(new MyLine(Color.Black, new List<Point>() { new Point(xMax, yMin), new Point(xMax, yMax) }).GetFigurePixels());
-            pixels.AddRange(new MyLine(Color.Black, new List<Point>() { new Point(xMax, yMax), new Point(xMin, yMax) }).GetFigurePixels());
-            pixels.AddRange(new MyLine(Color.Black, new List<Point>() { new Point(xMin, yMax), new Point(xMin, yMin) }).GetFigurePixels());
+            pixels.AddRange(new MyLine(Color.Black, new List<float[]>() { new float[] { xMin, yMin, 1 }, new float[] { xMax, yMin, 1 } }).GetFigurePixels());
+            pixels.AddRange(new MyLine(Color.Black, new List<float[]>() { new float[] { xMax, yMax, 1 }, new float[] { xMin, yMax, 1 } }).GetFigurePixels());
+            pixels.AddRange(new MyLine(Color.Black, new List<float[]>() { new float[] { xMin, yMax, 1 }, new float[] { xMin, yMin, 1 } }).GetFigurePixels());
+            pixels.AddRange(new MyLine(Color.Black, new List<float[]>() { new float[] { xMax, yMin, 1 }, new float[] { xMax, yMax, 1 } }).GetFigurePixels());
 
             return pixels;
         }

@@ -66,7 +66,7 @@ namespace GraphSystems2._0
             {
                 Color color = (Color)chooseColorBox.SelectedItem;
                 logic.pen = new Pen(color);
-                CreateNewFigure(color, new MyLine(color, new List<Point>(logic.clicks)), logic.pen);
+                CreateNewFigure(color, new MyLine(color, new List<PointF>(logic.clicks)), logic.pen);
             }
         }
 
@@ -88,13 +88,9 @@ namespace GraphSystems2._0
         {
             if (logic.clicks.Count >= 4 && e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                //logic.figureList.Add(new MyBezie((Color)chooseColorBox.SelectedItem, logic.clicks));
-                //logic.pen = new Pen((Color)chooseColorBox.SelectedItem);
-                //logic.DrawMyFigure(drawArea, logic.pen, logic.figureList[logic.figureList.Count - 1].GetFigurePixels());
-                //logic.clicks.Clear();
                 Color color = (Color)chooseColorBox.SelectedItem;
                 logic.pen = new Pen(color);
-                CreateNewFigure(color, new MyBezie(color, new List<Point>(logic.clicks)), logic.pen);
+                CreateNewFigure(color, new MyBezie(color, new List<PointF>(logic.clicks)), logic.pen);
             }
         }
 
@@ -123,7 +119,7 @@ namespace GraphSystems2._0
             {
                 Color color = (Color)chooseColorBox.SelectedItem;
                 logic.pen = new Pen(color);
-                CreateNewFigure(color, new MyTriangle(color, new List<Point>(logic.clicks)), logic.pen);
+                CreateNewFigure(color, new MyTriangle(color, new List<PointF>(logic.clicks)), logic.pen);
             }
         }
 
@@ -147,7 +143,7 @@ namespace GraphSystems2._0
             {
                 Color color = (Color)chooseColorBox.SelectedItem;
                 logic.pen = new Pen(color);
-                CreateNewFigure(color, new MyStar(color, new List<Point>(logic.clicks), Convert.ToInt32(starTopsBox.SelectedItem)), logic.pen);
+                 CreateNewFigure(color, new MyStar(color, new List<PointF>(logic.clicks), Convert.ToInt32(starTopsBox.SelectedItem)), logic.pen);
             }
         }
 
@@ -225,23 +221,23 @@ namespace GraphSystems2._0
                 {
                     if (item.Y < yMin)
                     {
-                        yMin = item.Y;
+                        yMin = (int)Math.Round(item.Y);
                     }
                     if (item.Y > yMax)
                     {
-                        yMax = item.Y;
+                        yMax = (int)Math.Round(item.Y);
                     }
                     if (item.X < xMin)
                     {
-                        xMin = item.X;
+                        xMin = (int)Math.Round(item.X);
                     }
                     if (item.X > xMax)
                     {
-                        xMax = item.X;
+                        xMax = (int)Math.Round(item.X);
                     }
                 }
 
-                logic.centerOfFigure = new Point((xMax + xMin) / 2, (yMax + yMin) / 2);
+                logic.centerOfFigure = new PointF((xMax + xMin) / 2, (yMax + yMin) / 2);
                 logic.xScale = (xMax - logic.centerOfFigure.X);
                 drawArea.FillEllipse(Brushes.Black, logic.centerOfFigure.X - 5, logic.centerOfFigure.Y - 5, 10, 10); // DrawEllipse(new Pen(Color.Black), centerOfFigure.X, centerOfFigure.Y, 100, 100);
                 MouseClick += MouseScaleClick;

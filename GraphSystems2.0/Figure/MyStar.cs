@@ -8,19 +8,20 @@ namespace Logic
     {
         private int tops;
 
-        public MyStar(Color color, List<Point> points, int tops) : base(color, points)
+        public MyStar(Color color, List<PointF> points, int tops) : base(color, points)
         {
             this.tops = tops;
+            Points = FindMyStarTops(points, tops);
         }
 
-        private List<Point> FindMyStarTops(List<Point> points, int tops)
+        private List<PointF> FindMyStarTops(List<PointF> points, int tops)
         {
-            Point center = points[0];
-            Point p = points[1];
+            PointF center = points[0];
+            PointF p = points[1];
 
             double radius = Math.Sqrt(Math.Pow((center.X - p.X), 2) + Math.Pow((center.Y - p.Y), 2));
             tops *= 2;
-            Point[] point = new Point[tops + 1];
+            PointF[] point = new PointF[tops + 1];
             point[0].X = center.X;
             point[0].Y = (int)Math.Round(center.Y - radius);
 
@@ -48,14 +49,12 @@ namespace Logic
 
             point[point.Length - 1] = point[0];
 
-            return new List<Point>(point);
+            return new List<PointF>(point);
         }
 
-        public override List<Point> GetFigurePixels()
+        public override List<PointF> GetFigurePixels()
         {
-            List<Point> tempPoints = FindMyStarTops(points, tops);
-            tempPoints = UseTransfMatrix(tempPoints);
-            return GetFillUpPixels(tempPoints);
+            return GetFillUpPixels(Points);
         }
     }
 }

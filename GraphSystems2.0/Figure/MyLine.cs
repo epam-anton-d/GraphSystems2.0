@@ -7,15 +7,19 @@ namespace Logic
 {
     internal class MyLine : Figure
     {
-        public MyLine(Color color, List<Point> points) : base(color, points)
+        public MyLine(Color color, List<float[]> points) : base(color, points)
         {
 
         }
 
-        public override List<Point> GetFigurePixels()
+        public MyLine(Color color, List<PointF> points) : base(color, points)
         {
-            List<Point> tempPoints = UseTransfMatrix();
-            return base.GetLinePixels(tempPoints);
+
+        }
+
+        public override List<PointF> GetFigurePixels()
+        {
+            return base.GetLinePixels(Points);
         }
     }
 }

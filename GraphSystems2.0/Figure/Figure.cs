@@ -7,42 +7,62 @@ namespace Logic
 {
     internal abstract class Figure
     {
-        protected List<Point> points;
-        protected double[,] transfMatrix;
+        //protected List<Point> points;
         protected Color color;
+        protected List<float[]> pointsMatrix;
 
-        public Figure(Color color, List<Point> points)
+        public Figure(Color color, List<float[]> pointsMatrix)
         {
             this.color = color;
-            this.points = points;
-            transfMatrix = new double[3, 3]
-            {
-                { 1, 0, 0 },
-                { 0, 1, 0 },
-                { 0, 0, 1 }
-            };
+            this.pointsMatrix = pointsMatrix;
         }
 
-        public List<Point> Points
+        public Figure(Color color, List<PointF> points)
         {
+            this.color = color;
+            this.Points = points;
+        }
+
+        public List<float[]> PointsMatrix
+        {
+            set
+            {
+                pointsMatrix = value;
+            }
             get
             {
-                return points;
+                return pointsMatrix;
             }
         }
 
-        public double[,] TransfMatrix
+        public List<PointF> Points
         {
             get
             {
-                return transfMatrix;
+                var tempPoints = new List<PointF>(pointsMatrix.Count);
+                for (int i = 0; i < pointsMatrix.Count; i++)
+                {
+                    tempPoints.Add(new PointF(pointsMatrix[i][0], pointsMatrix[i][1]));
+                }
+                return tempPoints;
             }
             set
             {
-                transfMatrix = value;
+                pointsMatrix = new List<float[]>(value.Count);
+                for (int i = 0; i < value.Count; i++)
+                {
+                    if (pointsMatrix.Count == value.Count)
+                    {
+                        pointsMatrix[i] = new float[] { value[i].X, value[i].Y, 1 };
+                    }
+                    else
+                    {
+                        pointsMatrix.Add(new float[] { value[i].X, value[i].Y, 1 });
+                    }
+                }
             }
         }
-
+        
         public Color ColorF
         {
             get
@@ -55,47 +75,18 @@ namespace Logic
             }
         }
 
-        protected List<Point> UseTransfMatrix()
-        {
-            List<Point> pointsTransf = new List<Point>();
-            int x, y;
-            
-            for (int i = 0; i < points.Count; i++)
-            {
-                x = (int)(transfMatrix[0, 0] * points[i].X + transfMatrix[1, 0] * points[i].Y + transfMatrix[2, 0] * 1);
-                y = (int)(transfMatrix[0, 1] * points[i].X + transfMatrix[1, 1] * points[i].Y + transfMatrix[2, 1] * 1);
-                pointsTransf.Add(new Point(x, y));
-            }
-
-            return pointsTransf;
-        }
-
-        protected List<Point> UseTransfMatrix(List<Point> points)
-        {
-            List<Point> pointsTransf = new List<Point>();
-            int x, y;
-
-            for (int i = 0; i < points.Count; i++)
-            {
-                x = (int)(transfMatrix[0, 0] * points[i].X + transfMatrix[1, 0] * points[i].Y + transfMatrix[2, 0] * 1);
-                y = (int)(transfMatrix[0, 1] * points[i].X + transfMatrix[1, 1] * points[i].Y + transfMatrix[2, 1] * 1);
-                pointsTransf.Add(new Point(x, y));
-            }
-
-            return pointsTransf;
-        }
-
         /// <summary>
         /// Получает все точки, принадлежащие отрезку линии.
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        public List<Point> GetLinePixels(List<Point> points)
+        public List<PointF> GetLinePixels(List<PointF> points)
         {
-            List<Point> pixels = new List<Point>();
-            int dx, dy, Sx = 0, Sy = 0;
-            Point pXY;
-            int F = 0, Fx = 0, dFx = 0, Fy = 0, dFy = 0;
+            var pixels = new List<PointF>();
+            float dx, dy;
+            int Sx = 0, Sy = 0;
+            PointF pXY;
+            float F = 0, Fx = 0, dFx = 0, Fy = 0, dFy = 0;
             dx = points[1].X - points[0].X;
             dy = points[1].Y - points[0].Y;
             bool tr = true;
@@ -150,33 +141,33 @@ namespace Logic
             return pixels;
         }
 
-        public abstract List<Point> GetFigurePixels();
+        public abstract List<PointF> GetFigurePixels();
 
-        protected List<Point> GetFillUpPixels(List<Point> points)
+        protected List<PointF> GetFillUpPixels(List<PointF> points)
         {
             int yMin = int.MaxValue,
                 yMax = int.MinValue,
                 x;
 
-            List<Point> pixels = new List<Point>();
+            var pixels = new List<PointF>();
 
             // Находим верхнюю-нижнюю границы фигуры.
             for (int i = 0; i < points.Count; i++)
             {
                 if (points[i].Y < yMin)
                 {
-                    yMin = points[i].Y;
+                    yMin = (int)Math.Round(points[i].Y);
                 }
                 if (points[i].Y > yMax)
                 {
-                    yMax = points[i].Y;
+                    yMax = (int)Math.Round(points[i].Y);
                 }
             }
 
-            List<int>[] line = new List<int>[yMax - yMin - 1]; // overflow exception
+            List<float>[] line = new List<float>[yMax - yMin - 1]; // overflow exception
             double[] b = new double[points.Count - 1];
             double[] k = new double[points.Count - 1];
-            int dx;
+            float dx;
 
             // Находим коэффициенты линий, ограничивающих фигуру.
             for (int i = 1; i < points.Count; i++)
@@ -204,7 +195,7 @@ namespace Logic
 
                         if (line[y - yMin - 1] == null)
                         {
-                            line[y - yMin - 1] = new List<int>();
+                            line[y - yMin - 1] = new List<float>();
                             line[y - yMin - 1].Add(x);
                         }
                         else
@@ -222,7 +213,7 @@ namespace Logic
                     {
                         if (line[y - yMin - 1][i - 1] != line[y - yMin - 1][i])
                         {
-                            pixels.AddRange(GetLinePixels(new List<Point> { new Point(line[y - yMin - 1][i - 1], y), new Point(line[y - yMin - 1][i], y) }));
+                            pixels.AddRange(GetLinePixels(new List<PointF> { new PointF(line[y - yMin - 1][i - 1], y), new PointF(line[y - yMin - 1][i], y) }));
                         }
                     }
                 }
@@ -232,24 +223,28 @@ namespace Logic
             return pixels;
         }
 
-        private double[,] MultiMatrix(double[,] a, double[,] b)
+        private List<float[]> MultiMatrix(List<float[]> a, List<float[]> b)
         {
-            int m = a.GetLength(0);
-            int n1 = a.GetLength(1);
-            int n2 = b.GetLength(0);
-            int k = b.GetLength(1);
+            // m - строки.
+            int m = a.Count;
+            // n1 - столбцы.
+            int n1 = a[0].Length;
+            int n2 = b.Count;
+            int k = b[0].Length;
 
             if (n1 == n2)
             {
-                var result = new double[m, k];
+                //var result = new double[m, k];
+                var result = new List<float[]>(m);
                 for (int i = 0; i < m; i++)
                 {
+                    result.Add(new float[k]);
                     for (int j = 0; j < k; j++)
                     {
                         for (int z = 0; z < n1; z++)
-			            {
-                            result[i, j] += a[i, z] * b[z, j];
-			            }
+                        {
+                            result[i][j] += a[i][z] * b[z][j];
+                        }
                     }
                 }
 
@@ -259,70 +254,85 @@ namespace Logic
             return null;
         }
 
-        private double[,] GetNewXOY(double[,] matrix, Point p)
+        private List<float[]> GetNewXOY(List<float[]> matrix, PointF p)
         {
-            var m1 = new double[3, 3]
+            var m1 = new List<float[]>(3)
             {
-                { 1, 0, 0 },
-                { 0, 1, 0 },
-                { -p.X, -p.Y, 1 }
+                new float[] { 1, 0, 0 },
+                new float[] { 0, 1, 0 },
+                new float[] { -p.X, -p.Y, 1}
             };
 
-            return MultiMatrix(m1, matrix);
+            return MultiMatrix(matrix, m1);
         }
 
-        private double[,] GetOldXOY(double[,] matrix, Point p)
+        private List<float[]> GetOldXOY(List<float[]> matrix, PointF p)
         {
-            var m2 = new double[3, 3]
+            var m2 = new List<float[]>(3)
             {
-                { 1, 0, 0 },
-                { 0, 1, 0 },
-                { p.X, p.Y, 1 }
+                new float[] { 1, 0, 0 },
+                new float[] { 0, 1, 0 },
+                new float[] { p.X, p.Y, 1}
             };
 
             return MultiMatrix(matrix, m2);
         }
 
-        public void Spin(double alfa, Point p)
+        public void Spin(double alfa, PointF p)
         {
-            var spinMatrix = new double[3, 3] 
+            var spinMatrix = new List<float[]>(3)
             {
-                { Math.Cos(alfa), -Math.Sin(alfa), 0 },
-                { Math.Sin(alfa), Math.Cos(alfa), 0 },
-                { 0, 0, 1 }
+                new float[] { Convert.ToSingle(Math.Cos(alfa)), Convert.ToSingle(-Math.Sin(alfa)), 0 },
+                new float[] { Convert.ToSingle(Math.Sin(alfa)), Convert.ToSingle(Math.Cos(alfa)), 0 },
+                new float[] { 0, 0, 1 }
             };
 
-            transfMatrix = GetNewXOY(transfMatrix, p);
-            transfMatrix = MultiMatrix(transfMatrix, spinMatrix);
-            transfMatrix = GetOldXOY(transfMatrix, p);
+            //pointsMatrix = GetNewXOY(pointsMatrix, p);
+            //pointsMatrix = MultiMatrix(pointsMatrix, spinMatrix);
+            //pointsMatrix = GetOldXOY(pointsMatrix, p);
+            for (int i = 0; i < pointsMatrix.Count; i++)
+            {
+                pointsMatrix[i] = GetNewXOY(new List<float[]> { pointsMatrix[i] }, p)[0];
+                pointsMatrix[i] = MultiMatrix(new List<float[]> { pointsMatrix[i] }, spinMatrix)[0];
+                pointsMatrix[i] = GetOldXOY(new List<float[]> { pointsMatrix[i] }, p)[0];
+            }
         }
 
-        public void Scale(Point centerOfFigure, double xScale)
+        public void Scale(PointF centerOfFigure, float xScale)
         {
-            var scaleMatrix = new double[3, 3]
+            var scaleMatrix = new List<float[]>(3)
             {
-                { xScale, 0, 0 },
-                { 0, 1, 0 },
-                { 0, 0, 1 }
+                new float[] { xScale, 0, 0 },
+                new float[] { 0, 1, 0 },
+                new float[] { 0, 0, 1 }
             };
 
-            transfMatrix = GetNewXOY(transfMatrix, centerOfFigure);
-            transfMatrix = MultiMatrix(transfMatrix, scaleMatrix);
-            transfMatrix = GetOldXOY(transfMatrix, centerOfFigure);
+            //pointsMatrix = GetNewXOY(pointsMatrix, centerOfFigure);
+            //pointsMatrix = MultiMatrix(pointsMatrix, scaleMatrix);
+            //pointsMatrix = GetOldXOY(pointsMatrix, centerOfFigure);
+            for (int i = 0; i < pointsMatrix.Count; i++)
+            {
+                pointsMatrix[i] = GetNewXOY(new List<float[]> { pointsMatrix[i] }, centerOfFigure)[0];
+                pointsMatrix[i] = MultiMatrix(new List<float[]> { pointsMatrix[i] }, scaleMatrix)[0];
+                pointsMatrix[i] = GetOldXOY(new List<float[]> { pointsMatrix[i] }, centerOfFigure)[0];
+            }
         }
 
-        public void Mirror(Point mirrorPoint)
+        public void Mirror(PointF mirrorPoint)
         {
-            var mirrorMatrix = new double[3, 3]
+            var mirrorMatrix = new List<float[]>(3)
             {
-                { 1, 0, 0 },
-                { 0, -1, 0 },
-                { 0, 0, 1 }
+                new float[] { 1, 0, 0 },
+                new float[] { 0, -1, 0 },
+                new float[] { 0, 0, 1 }
             };
 
-            transfMatrix = GetNewXOY(transfMatrix, mirrorPoint);
-            transfMatrix = MultiMatrix(transfMatrix, mirrorMatrix);
-            transfMatrix = GetOldXOY(transfMatrix, mirrorPoint);
+            for (int i = 0; i < pointsMatrix.Count; i++)
+            {
+                pointsMatrix[i] = GetNewXOY(new List<float[]> { pointsMatrix[i] }, mirrorPoint)[0];
+                pointsMatrix[i] = MultiMatrix(new List<float[]> { pointsMatrix[i] }, mirrorMatrix)[0];
+                pointsMatrix[i] = GetOldXOY(new List<float[]> { pointsMatrix[i] }, mirrorPoint)[0];
+            }
         }
     }
 }
