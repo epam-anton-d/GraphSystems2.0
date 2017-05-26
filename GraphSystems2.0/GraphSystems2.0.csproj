@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Figure\Figure.cs" />
+    <Compile Include="Figure\MyFigure.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -57,6 +58,7 @@
     <Compile Include="Figure\MyStar.cs" />
     <Compile Include="Figure\MyTriangle.cs" />
     <Compile Include="LogicLayer.cs" />
+    <Compile Include="Operatioins.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

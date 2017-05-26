@@ -143,13 +143,34 @@ namespace GraphSystems2._0
             {
                 Color color = (Color)chooseColorBox.SelectedItem;
                 logic.pen = new Pen(color);
-                 CreateNewFigure(color, new MyStar(color, new List<PointF>(logic.clicks), Convert.ToInt32(starTopsBox.SelectedItem)), logic.pen);
+                CreateNewFigure(color, new MyStar(color, new List<PointF>(logic.clicks), Convert.ToInt32(starTopsBox.SelectedItem)), logic.pen);
             }
         }
 
         private void intersecButton_Click(object sender, EventArgs e)
         {
-
+            if (logic.firstSelectedFigure != -1 && logic.secondSelectedFigure != -1)
+            {
+                //logic.figureList.AddRange(Operatioins.Intersection(logic.figureList[logic.firstSelectedFigure], logic.figureList[logic.secondSelectedFigure]));
+                var interSecFigures = Operatioins.Intersection(logic.figureList[logic.firstSelectedFigure], logic.figureList[logic.secondSelectedFigure]);
+                logic.figureList.AddRange(interSecFigures);
+                foreach (var figure in interSecFigures)
+                {
+                    logic.DrawMyFigure(drawArea, new Pen(Color.Black), figure.GetFigurePixels());
+                }
+                Thread.Sleep(5000);
+                if (logic.firstSelectedFigure > logic.secondSelectedFigure)
+                {
+                    logic.figureList.RemoveAt(logic.firstSelectedFigure);
+                    logic.figureList.RemoveAt(logic.secondSelectedFigure);
+                }
+                else
+                {
+                    logic.figureList.RemoveAt(logic.secondSelectedFigure);
+                    logic.figureList.RemoveAt(logic.firstSelectedFigure);
+                }
+                Refresh();
+            }
         }
 
         private void symDiffButton_Click(object sender, EventArgs e)
