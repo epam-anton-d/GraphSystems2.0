@@ -8,7 +8,8 @@ namespace Logic
     {
         public List<PointF> clicks;
         public List<Figure> figureList;
-        public List<PointF> selection;
+        public List<PointF> firstSelection;
+        public List<PointF> secondSelection;
         public Pen pen;
         public int firstSelectedFigure;
         public int secondSelectedFigure;
@@ -22,7 +23,8 @@ namespace Logic
         {
             clicks = new List<PointF>();
             figureList = new List<Figure>();
-            selection = new List<PointF>();
+            firstSelection = new List<PointF>();
+            secondSelection = new List<PointF>();
             pen = new Pen(Color.Red);
             firstSelectedFigure = -1;
             secondSelectedFigure = -1;

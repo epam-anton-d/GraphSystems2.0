@@ -164,6 +164,11 @@ namespace Logic
                 }
             }
 
+            if (yMax == yMin)
+            {
+                return points;
+            }
+
             List<float>[] line = new List<float>[yMax - yMin - 1]; // overflow exception
             double[] b = new double[points.Count - 1];
             double[] k = new double[points.Count - 1];
@@ -287,9 +292,6 @@ namespace Logic
                 new float[] { 0, 0, 1 }
             };
 
-            //pointsMatrix = GetNewXOY(pointsMatrix, p);
-            //pointsMatrix = MultiMatrix(pointsMatrix, spinMatrix);
-            //pointsMatrix = GetOldXOY(pointsMatrix, p);
             for (int i = 0; i < pointsMatrix.Count; i++)
             {
                 pointsMatrix[i] = GetNewXOY(new List<float[]> { pointsMatrix[i] }, p)[0];
@@ -307,9 +309,6 @@ namespace Logic
                 new float[] { 0, 0, 1 }
             };
 
-            //pointsMatrix = GetNewXOY(pointsMatrix, centerOfFigure);
-            //pointsMatrix = MultiMatrix(pointsMatrix, scaleMatrix);
-            //pointsMatrix = GetOldXOY(pointsMatrix, centerOfFigure);
             for (int i = 0; i < pointsMatrix.Count; i++)
             {
                 pointsMatrix[i] = GetNewXOY(new List<float[]> { pointsMatrix[i] }, centerOfFigure)[0];

@@ -36,7 +36,7 @@ namespace GraphSystems2._0
                 starTopsBox.Items.Add(topCounter);
             }
 
-            var colors = new Color[] { Color.Blue, Color.Red, Color.Green };
+            var colors = new Color[] { Color.Blue, Color.Red, Color.Green, Color.Pink, Color.Violet, Color.Orange };
             foreach (var item in colors)
             {
                 chooseColorBox.Items.Add(item);
@@ -53,6 +53,7 @@ namespace GraphSystems2._0
             makeUp.isTriangleButtonClicked = false;
             makeUp.isStarButtonClicked = false;
             makeUp.isEditButtonClicked = false;
+            DropSelection();
 
             ChoosePushButtonsColor();
             StopEvents();
@@ -77,6 +78,7 @@ namespace GraphSystems2._0
             makeUp.isTriangleButtonClicked = false;
             makeUp.isStarButtonClicked = false;
             makeUp.isEditButtonClicked = false;
+            DropSelection();
 
             ChoosePushButtonsColor();
             StopEvents();
@@ -106,6 +108,7 @@ namespace GraphSystems2._0
             makeUp.isBezieButtonClicked = false;
             makeUp.isStarButtonClicked = false;
             makeUp.isEditButtonClicked = false;
+            DropSelection();
 
             ChoosePushButtonsColor();
             StopEvents();
@@ -130,6 +133,7 @@ namespace GraphSystems2._0
             makeUp.isBezieButtonClicked = false;
             makeUp.isTriangleButtonClicked = false;
             makeUp.isEditButtonClicked = false;
+            DropSelection();
 
             StopEvents();
             ChoosePushButtonsColor();
@@ -149,9 +153,10 @@ namespace GraphSystems2._0
 
         private void intersecButton_Click(object sender, EventArgs e)
         {
+            StopEvents();
+            MakeButtonsFalse();
             if (logic.firstSelectedFigure != -1 && logic.secondSelectedFigure != -1)
             {
-                //logic.figureList.AddRange(Operatioins.Intersection(logic.figureList[logic.firstSelectedFigure], logic.figureList[logic.secondSelectedFigure]));
                 var interSecFigures = Operatioins.Intersection(logic.figureList[logic.firstSelectedFigure], logic.figureList[logic.secondSelectedFigure]);
                 logic.figureList.AddRange(interSecFigures);
                 foreach (var figure in interSecFigures)
@@ -170,12 +175,38 @@ namespace GraphSystems2._0
                     logic.figureList.RemoveAt(logic.firstSelectedFigure);
                 }
                 Refresh();
+                logic.firstSelectedFigure = -1;
+                logic.secondSelectedFigure = -1;
             }
         }
 
         private void symDiffButton_Click(object sender, EventArgs e)
         {
-
+            StopEvents();
+            MakeButtonsFalse();
+            if (logic.firstSelectedFigure != -1 && logic.secondSelectedFigure != -1)
+            {
+                var interSecFigures = Operatioins.SymDifference(logic.figureList[logic.firstSelectedFigure], logic.figureList[logic.secondSelectedFigure]);
+                logic.figureList.AddRange(interSecFigures);
+                foreach (var figure in interSecFigures)
+                {
+                    logic.DrawMyFigure(drawArea, new Pen(Color.Black), figure.GetFigurePixels());
+                }
+                Thread.Sleep(5000);
+                if (logic.firstSelectedFigure > logic.secondSelectedFigure)
+                {
+                    logic.figureList.RemoveAt(logic.firstSelectedFigure);
+                    logic.figureList.RemoveAt(logic.secondSelectedFigure);
+                }
+                else
+                {
+                    logic.figureList.RemoveAt(logic.secondSelectedFigure);
+                    logic.figureList.RemoveAt(logic.firstSelectedFigure);
+                }
+                Refresh();
+                logic.firstSelectedFigure = -1;
+                logic.secondSelectedFigure = -1;
+            }
         }
 
         private void spinButton_Click(object sender, EventArgs e)
@@ -238,7 +269,7 @@ namespace GraphSystems2._0
                     yMax = int.MinValue,
                     xMax = int.MinValue;
 
-                foreach (var item in logic.selection)
+                foreach (var item in logic.firstSelection)
                 {
                     if (item.Y < yMin)
                     {
@@ -288,14 +319,15 @@ namespace GraphSystems2._0
 
         void EditButttonClick(object sender, MouseEventArgs e)
         {
+            var isBreak = false;
             if (logic.firstSelectedFigure != -1 && Form1.ModifierKeys != Keys.Shift)
             {
-                logic.firstSelectedFigure = -1;
+                //logic.firstSelectedFigure = -1;
                 Refresh();
             }
             else if (logic.secondSelectedFigure != -1 && Form1.ModifierKeys == Keys.Shift)
             {
-                logic.secondSelectedFigure = -1;
+                //logic.secondSelectedFigure = -1;
                 Refresh();
             }
             if (Form1.ModifierKeys == Keys.Shift)
@@ -308,11 +340,32 @@ namespace GraphSystems2._0
                         {
                             logic.secondSelectedFigure = i;
                             logic.pen = new Pen(Color.Black);
-                            logic.selection = logic.GetSelection(logic.figureList[i]);
-                            logic.DrawMyFigure(drawArea, logic.pen, logic.selection);
+                            logic.secondSelection = logic.GetSelection(logic.figureList[i]);
+                            logic.DrawMyFigure(drawArea, logic.pen, logic.secondSelection);
+                            isBreak = true;
                             break;
                         }
                     }
+                    if (isBreak)
+                    {
+                        break;
+                    }
+                }
+                if (!isBreak)
+                {
+                    logic.firstSelectedFigure = -1;
+                    logic.secondSelectedFigure = -1;
+                }
+                else
+                {
+                    isBreak = false;
+                }
+                // new
+                if (logic.firstSelectedFigure != -1)
+                {
+                    logic.pen = new Pen(Color.Black);
+                    logic.firstSelection = logic.GetSelection(logic.figureList[logic.firstSelectedFigure]);
+                    logic.DrawMyFigure(drawArea, logic.pen, logic.firstSelection);
                 }
             }
             else
@@ -325,11 +378,32 @@ namespace GraphSystems2._0
                         {
                             logic.firstSelectedFigure = i;
                             logic.pen = new Pen(Color.Black);
-                            logic.selection = logic.GetSelection(logic.figureList[i]);
-                            logic.DrawMyFigure(drawArea, logic.pen, logic.selection);
+                            logic.firstSelection = logic.GetSelection(logic.figureList[i]);
+                            logic.DrawMyFigure(drawArea, logic.pen, logic.firstSelection);
+                            isBreak = true;
                             break;
                         }
                     }
+                    if (isBreak)
+                    {
+                        break;
+                    }
+                }
+                if (!isBreak)
+                {
+                    logic.firstSelectedFigure = -1;
+                    logic.secondSelectedFigure = -1;
+                }
+                else
+                {
+                    isBreak = false;
+                }
+                // new
+                if (logic.secondSelectedFigure != -1)
+                {
+                    logic.pen = new Pen(Color.Black);
+                    logic.secondSelection = logic.GetSelection(logic.figureList[logic.secondSelectedFigure]);
+                    logic.DrawMyFigure(drawArea, logic.pen, logic.secondSelection);
                 }
             }
         }
@@ -422,6 +496,16 @@ namespace GraphSystems2._0
         private void CreateNewFigure(Color color, Figure figure, Pen pen)
         {
             logic.CreateNewFigure(color, figure, pen, drawArea);
+        }
+
+        private void DropSelection()
+        {
+            if (logic.firstSelectedFigure != -1 || logic.secondSelectedFigure != -1)
+            {
+                logic.firstSelectedFigure = -1;
+                logic.secondSelectedFigure = -1;
+                Refresh();
+            }
         }
     }
 }
